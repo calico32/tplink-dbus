@@ -1,0 +1,31 @@
+name: ci
+on: [push]
+
+jobs:
+  package:
+    name: package
+    if: github.event_name == 'push' && contains(toJson(github.event.commits), '***NO_CI***') == false && contains(toJson(github.event.commits), '[ci skip]') == false && contains(toJson(github.event.commits), '[skip ci]') == false
+    runs-on: ubuntu-latest
+
+    env:
+      CI: true
+
+    strategy:
+      matrix:
+        node-version: [10.x, 12.x, 14.x, 15.x]
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: yarn
+      - run: yarn build
+      - run: yarn package
+      - uses: actions/upload-artifact@v2
+        with:
+          name: built-artifacts on ${{ matrix.node-version }}
+          path: |
+            build/*.js
+            out
+          if-no-files-found: warn
