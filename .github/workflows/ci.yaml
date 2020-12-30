@@ -24,7 +24,7 @@ jobs:
       - run: yarn package
       - uses: actions/upload-artifact@v2
         with:
-          name: built-artifacts on ${{ matrix.node-version }}
+          name: built files on ${{ matrix.node-version }}
           path: |
             build/*.js
             out

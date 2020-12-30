@@ -29,7 +29,7 @@ export default <Configuration>{
   externals: devMode ? [nodeExternals()] : undefined,
   plugins: [
     new ForkTSCheckerPlugin(),
-    new ProgressPlugin({}),
+    !process.env.CI && new ProgressPlugin({}),
     new FilterWarningsPlugin({
       exclude: [
         /Module not found: Error: Can't resolve 'x11' in '.*dbus-next\/lib'/,
@@ -37,6 +37,6 @@ export default <Configuration>{
       ],
     }),
     new BannerPlugin({ banner: '#!/usr/bin/env node', raw: true }),
-  ],
+  ].filter(v => !!v),
   module: { rules: [{ test: /\.ts$/, loader: 'babel-loader' }] },
 };
